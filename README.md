@@ -105,18 +105,18 @@ tensor-processing-unit/
 │
 ├── verif/
 │   ├── ref_model/
-│   │   ├── numpy_quant_ref.py        # quantized matmul/conv reference (NumPy)
-│   │   └── layer_test_gen.py         # generates weight/activation test tensors + expected output
+│   │   ├── numpy_quant_ref.py       
+│   │   └── layer_test_gen.py       
 │   ├── tb/
-│   │   ├── pe_tb.sv                  # single-PE unit test
-│   │   ├── systolic_array_tb.sv      # array-level matmul test
+│   │   ├── pe_tb.sv                 
+│   │   ├── systolic_array_tb.sv      
 │   │   ├── requantize_tb.sv
-│   │   └── system_tb.sv              # full instruction-sequence layer test
+│   │   └── system_tb.sv             
 │   ├── sva/
-│   │   ├── array_ctrl_assertions.sv  # weight-load/compute phase never overlaps illegally
+│   │   ├── array_ctrl_assertions.sv  
 │   │   └── instr_queue_assertions.sv
 │   └── layers/
-│       └── sample_conv_layer/        # a real small conv layer's weights/activations for e2e test
+│       └── sample_conv_layer/       
 │
 ├── sim/
 │   └── verilator/
@@ -124,14 +124,14 @@ tensor-processing-unit/
 │       └── sim_main.cpp
 │
 ├── analysis/
-│   └── accuracy_report.py            # RTL INT8 output vs. NumPy reference error analysis
+│   └── accuracy_report.py            
 │
 ├── scripts/
 │   └── run_regression.py
 │
 └── .github/
     └── workflows/
-        └── ci.yml                    # lint + array/PE-level smoke tests on push
+        └── ci.yml                   
 ```
 
 ---
