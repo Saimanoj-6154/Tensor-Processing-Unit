@@ -135,3 +135,10 @@ tensor-processing-unit/
 ```
 
 ---
+
+
+### Tools
+
+- Verilator ≥ 5.0
+- Python 3.10+ with NumPy (reference model, accuracy analysis)
+- GTKWave for waveform debug
