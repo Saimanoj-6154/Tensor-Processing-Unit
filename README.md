@@ -142,3 +142,25 @@ tensor-processing-unit/
 - Verilator ≥ 5.0
 - Python 3.10+ with NumPy (reference model, accuracy analysis)
 - GTKWave for waveform debug
+
+
+## Verification Approach
+
+- **PE-level unit tests**: a single processing element's MAC and
+  pass-through behavior verified in isolation before scaling to the
+  full array.
+- **Array-level matmul tests**: the full systolic array checked against
+  `numpy_quant_ref.py` for a range of tile sizes and weight/activation
+  patterns, including edge cases (partial tiles, all-zero weights,
+  saturation at INT32 accumulate boundaries).
+- **Instruction-sequence system test**: `system_tb.sv` issues a full
+  LOAD_WEIGHTS → MATMUL → LOAD_ACT → ACTIVATE → STORE sequence for a
+  real sample convolution layer and checks the result end-to-end.
+- **Quantization accuracy**: `analysis/accuracy_report.py` compares
+  RTL INT8 output against the floating-point-then-quantized NumPy
+  reference and reports per-layer error, since requantization
+  correctness (not just matmul correctness) is where quantized
+  accelerators commonly go wrong.
+- **Assertions (SVA)**: control-path invariants — array never begins a
+  compute phase while a weight load is in flight, instruction queue
+  never issues a MATMUL before its LOAD_WEIGHTS dependency completes.
