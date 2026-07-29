@@ -73,33 +73,33 @@ tensor-processing-unit/
 ├── README.md
 ├── LICENSE
 ├── .gitignore
-├── Makefile                          # top-level: make sim / make regress / make sw
+├── Makefile                         
 ├── docs/
-│   ├── microarchitecture.md          # systolic array, dataflow, buffer sizing
-│   ├── instruction_set.md            # host instruction encodings + semantics
-│   ├── quantization_scheme.md        # INT8 quant/requant math, scale/zero-point handling
-│   └── verification_plan.md          # test plan, reference-model comparison methodology
+│   ├── microarchitecture.md         
+│   ├── instruction_set.md           
+│   ├── quantization_scheme.md       
+│   └── verification_plan.md         
 │
 ├── rtl/
 │   ├── array/
-│   │   ├── systolic_array.sv         # top-level N x N array, parametrized
-│   │   ├── pe.sv                     # single processing element (MAC + pass-through regs)
-│   │   └── array_ctrl.sv             # weight-load / compute phase sequencing
+│   │   ├── systolic_array.sv        
+│   │   ├── pe.sv                     
+│   │   └── array_ctrl.sv            
 │   ├── memory/
 │   │   ├── weight_fifo.sv
-│   │   ├── unified_buffer.sv         # activation SRAM
+│   │   ├── unified_buffer.sv         
 │   │   └── result_buffer.sv
 │   ├── datapath/
-│   │   ├── activation_pipeline.sv    # bias-add, ReLU
-│   │   └── requantize_unit.sv        # INT32 -> INT8 scale + zero-point
+│   │   ├── activation_pipeline.sv    
+│   │   └── requantize_unit.sv       
 │   ├── ctrl/
-│   │   ├── instr_decoder.sv          # decodes LOAD_WEIGHTS/MATMUL/LOAD_ACT/ACTIVATE/STORE
+│   │   ├── instr_decoder.sv          
 │   │   └── instr_queue.sv
 │   ├── host_if/
-│   │   ├── csr_block.sv              # memory-mapped control/status registers
+│   │   ├── csr_block.sv             
 │   │   └── dma_stream_if.sv
 │   ├── common/
-│   │   └── pkg_tpu_params.sv         # array size, buffer depth, quant bit-widths
+│   │   └── pkg_tpu_params.sv
 │   └── top/
 │       └── tpu_top.sv
 │
