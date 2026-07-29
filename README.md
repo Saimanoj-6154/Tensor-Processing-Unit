@@ -27,3 +27,40 @@ A synthesizable, minimal tensor processing unit built around a systolic array da
   result readback
 - **Verification**: layer-level correctness checked against a NumPy/
   TensorFlow-Lite-style quantized reference implementation
+
+
+## Architecture Overview
+
+```
+   Host ──▶ ┌─────────────────────┐
+            │  Instruction Queue   │  LOAD_WEIGHTS / MATMUL / LOAD_ACT /
+            │  (host-issued ops)   │  ACTIVATE / STORE
+            └──────────┬──────────┘
+                       ▼
+   ┌───────────────────┴────────────────────┐
+   │              Control FSM                 │
+   └──────┬───────────────────────┬──────────┘
+          ▼                       ▼
+ ┌─────────────────┐    ┌─────────────────────┐
+ │  Weight FIFO      │   │  Unified Buffer       │  activation SRAM
+ │  (stationary load) │  │  (streams activations)│
+ └────────┬──────────┘   └──────────┬───────────┘
+          ▼                          ▼
+   ┌────────────────────────────────────────┐
+   │        Systolic MAC Array (N x N)         │  weight-stationary,
+   │   ┌────┐┌────┐┌────┐         ┌────┐      │  INT8 x INT8 -> INT32
+   │   │ PE ││ PE ││ PE │   ...   │ PE │      │
+   │   └────┘└────┘└────┘         └────┘      │
+   └───────────────────┬──────────────────────┘
+                        ▼
+           ┌─────────────────────────┐
+           │  Activation Pipeline      │  bias-add, ReLU,
+           │  (post-matmul functional  │  requantize -> INT8
+           │   unit)                   │
+           └────────────┬─────────────┘
+                        ▼
+                ┌───────────────┐
+                │  Result Store  │──▶ Host readback / next layer
+                └───────────────┘
+```
+---
