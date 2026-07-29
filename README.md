@@ -64,3 +64,74 @@ A synthesizable, minimal tensor processing unit built around a systolic array da
                 └───────────────┘
 ```
 ---
+
+
+## Repository Structure
+
+```
+tensor-processing-unit/
+├── README.md
+├── LICENSE
+├── .gitignore
+├── Makefile                          # top-level: make sim / make regress / make sw
+├── docs/
+│   ├── microarchitecture.md          # systolic array, dataflow, buffer sizing
+│   ├── instruction_set.md            # host instruction encodings + semantics
+│   ├── quantization_scheme.md        # INT8 quant/requant math, scale/zero-point handling
+│   └── verification_plan.md          # test plan, reference-model comparison methodology
+│
+├── rtl/
+│   ├── array/
+│   │   ├── systolic_array.sv         # top-level N x N array, parametrized
+│   │   ├── pe.sv                     # single processing element (MAC + pass-through regs)
+│   │   └── array_ctrl.sv             # weight-load / compute phase sequencing
+│   ├── memory/
+│   │   ├── weight_fifo.sv
+│   │   ├── unified_buffer.sv         # activation SRAM
+│   │   └── result_buffer.sv
+│   ├── datapath/
+│   │   ├── activation_pipeline.sv    # bias-add, ReLU
+│   │   └── requantize_unit.sv        # INT32 -> INT8 scale + zero-point
+│   ├── ctrl/
+│   │   ├── instr_decoder.sv          # decodes LOAD_WEIGHTS/MATMUL/LOAD_ACT/ACTIVATE/STORE
+│   │   └── instr_queue.sv
+│   ├── host_if/
+│   │   ├── csr_block.sv              # memory-mapped control/status registers
+│   │   └── dma_stream_if.sv
+│   ├── common/
+│   │   └── pkg_tpu_params.sv         # array size, buffer depth, quant bit-widths
+│   └── top/
+│       └── tpu_top.sv
+│
+├── verif/
+│   ├── ref_model/
+│   │   ├── numpy_quant_ref.py        # quantized matmul/conv reference (NumPy)
+│   │   └── layer_test_gen.py         # generates weight/activation test tensors + expected output
+│   ├── tb/
+│   │   ├── pe_tb.sv                  # single-PE unit test
+│   │   ├── systolic_array_tb.sv      # array-level matmul test
+│   │   ├── requantize_tb.sv
+│   │   └── system_tb.sv              # full instruction-sequence layer test
+│   ├── sva/
+│   │   ├── array_ctrl_assertions.sv  # weight-load/compute phase never overlaps illegally
+│   │   └── instr_queue_assertions.sv
+│   └── layers/
+│       └── sample_conv_layer/        # a real small conv layer's weights/activations for e2e test
+│
+├── sim/
+│   └── verilator/
+│       ├── Makefile
+│       └── sim_main.cpp
+│
+├── analysis/
+│   └── accuracy_report.py            # RTL INT8 output vs. NumPy reference error analysis
+│
+├── scripts/
+│   └── run_regression.py
+│
+└── .github/
+    └── workflows/
+        └── ci.yml                    # lint + array/PE-level smoke tests on push
+```
+
+---
